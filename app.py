@@ -1,3 +1,4 @@
+
 import streamlit as st
 from groq import Groq
 from dotenv import load_dotenv
@@ -63,7 +64,8 @@ food_menu = {
         "Aloo Paratha": 90,
         "Veg Burger": 120,
         "Veg Pizza": 220,
-        "Veg Sandwich": 100
+        "Veg Sandwich": 100,
+        "Maggie" : 80
     },
 
     "Non-Veg Foods": {
@@ -73,6 +75,11 @@ food_menu = {
         "Chicken Noodles": 180,
         "Chicken 65": 200,
         "Chicken Tikka": 250,
+        "Tandoori chicken" : 500,
+        "Chicken BBQ" : 280,
+        "Chicken kebab" : 190,
+        "Chicken shawarma" : 120,
+        "Spicy chicken" : 170,
         "Butter Chicken": 260,
         "Pepper Chicken": 240,
         "Mutton Curry": 280,
@@ -103,7 +110,13 @@ food_menu = {
         "Milk Shake": 120,
         "Chocolate Shake": 140,
         "Strawberry Shake": 130,
-        "Badam Milk": 90
+        "Badam Milk": 90,
+        "Elaneer Payasam Cold" : 50,
+        "Grape Juice" : 70,
+        "Musk Melon Juice":70,
+        "ABC Juice" :120,
+        "Carrot juice" : 60,
+
     },
 
     "Desserts": {
@@ -114,7 +127,10 @@ food_menu = {
         "Payasam": 60,
         "Brownie": 100,
         "Chocolate Cake": 120,
-        "Black Forest Cake": 140
+        "Black Forest Cake": 140,
+        "Red velvet cake" : 160,
+        "Honey cake" : 80,
+        "White forest cake" : 150
     }
 }
 
