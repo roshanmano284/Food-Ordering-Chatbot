@@ -399,46 +399,122 @@ user_prompt = st.chat_input(
 
 if user_prompt:
 
-    st.chat_message("user").markdown(user_prompt)
+    # Display user message
+    with st.chat_message("user"):
+        st.markdown(user_prompt)
 
-    st.session_state.messages.append(
-        {
-            "role":"user",
-            "content":user_prompt
-        }
-    )
+    st.session_state.messages.append({
+        "role": "user",
+        "content": user_prompt
+    })
 
+    # -----------------------------
+    # HANDLE ORDER CONFIRMATION
+    # -----------------------------
+    order_keywords = [
+        "place order",
+        "order now",
+        "confirm order",
+        "checkout",
+        "my order is placed",
+        "order placed"
+    ]
+
+    if any(word in user_prompt.lower() for word in order_keywords):
+
+        if len(st.session_state.cart) == 0:
+
+            answer = """
+❌ Your cart is empty.
+
+Please add some food before placing your order.
+"""
+
+        else:
+
+            total = 0
+
+            order_list = ""
+
+            for item in st.session_state.cart:
+
+                order_list += f"✅ {item}\n"
+
+                for category in food_menu:
+                    if item in food_menu[category]:
+                        total += food_menu[category][item]
+
+            answer = f"""
+# 🎉 Order Confirmed
+
+Your order has been placed successfully!
+
+## 🛒 Ordered Items
+
+{order_list}
+
+### 💰 Total Amount: ₹{total}
+
+🚚 Estimated Delivery: **30 Minutes**
+
+Thank you for choosing **AI Food Ordering Assistant** ❤️
+"""
+
+        with st.chat_message("assistant"):
+            st.markdown(answer)
+
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": answer
+        })
+
+        st.stop()
+
+    # -----------------------------
+    # CURRENT CART
+    # -----------------------------
+    if len(st.session_state.cart) == 0:
+        cart_text = "Cart is empty."
+    else:
+        cart_text = ", ".join(st.session_state.cart)
+
+    # -----------------------------
+    # SYSTEM PROMPT
+    # -----------------------------
     system_prompt = f"""
 You are an intelligent Food Ordering Assistant.
 
 Available Menu:
+
 {food_menu}
 
-Responsibilities:
-- Help customers order food
-- Recommend dishes
-- Suggest combos
-- Mention prices when asked
-- Be friendly
-- Respond naturally like ChatGPT
-- Use emojis occasionally
-- Remember previous messages
+Current Cart:
+
+{cart_text}
+
+Rules:
+
+- Recommend foods.
+- Tell prices.
+- Suggest combos.
+- If the user asks about their cart, use the Current Cart.
+- Never say the cart is empty if Current Cart has items.
+- If user asks food recommendations, answer naturally.
+- Use emojis occasionally.
 """
 
     groq_messages = [
         {
-            "role":"system",
-            "content":system_prompt
+            "role": "system",
+            "content": system_prompt
         }
     ]
 
     for msg in st.session_state.messages:
-        groq_messages.append(
-            {
-                "role":msg["role"],
-                "content":msg["content"]
-            }
-        )
+        groq_messages.append({
+            "role": msg["role"],
+            "content": msg["content"]
+        })
 
     try:
 
@@ -454,12 +530,10 @@ Responsibilities:
         with st.chat_message("assistant"):
             st.markdown(answer)
 
-        st.session_state.messages.append(
-            {
-                "role":"assistant",
-                "content":answer
-            }
-        )
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": answer
+        })
 
     except Exception as e:
         st.error(f"Error: {e}")
