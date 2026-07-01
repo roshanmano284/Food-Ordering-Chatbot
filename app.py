@@ -1,33 +1,20 @@
-
 import streamlit as st
 from groq import Groq
 from dotenv import load_dotenv
 import os
 
-# -----------------------------
-# Load API Key
-# -----------------------------
+# MUST BE THE FIRST STREAMLIT COMMAND
+st.set_page_config(
+    page_title="AI Food Ordering Assistant",
+    page_icon="🍔",
+    layout="wide"
+)
+
 load_dotenv()
 
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 )
-
-# -----------------------------
-# Page Config
-# -----------------------------
-st.set_page_config(
-    page_title="AI Food Ordering Chatbot",
-    page_icon="🍔",
-    layout="wide"
-)
-
-st.title("🍔 AI Food Ordering Chatbot")
-st.caption("Order food, ask for recommendations, and chat naturally.")
-
-# -----------------------------
-# Food Menu
-# -----------------------------
 food_menu = {
 
     "Tamil Foods": {
@@ -46,10 +33,9 @@ food_menu = {
         "Sambar Rice": 90,
         "Curd Rice": 80,
         "Lemon Rice": 80,
-        "Tamarind Rice": 80,
         "Tomato Rice": 80,
         "Veg Meals": 150,
-        "Chappathi": 40
+        "Chapathi": 40
     },
 
     "Veg Foods": {
@@ -65,7 +51,7 @@ food_menu = {
         "Veg Burger": 120,
         "Veg Pizza": 220,
         "Veg Sandwich": 100,
-        "Maggie" : 80
+        "Maggie": 80
     },
 
     "Non-Veg Foods": {
@@ -75,11 +61,10 @@ food_menu = {
         "Chicken Noodles": 180,
         "Chicken 65": 200,
         "Chicken Tikka": 250,
-        "Tandoori chicken" : 500,
-        "Chicken BBQ" : 280,
-        "Chicken kebab" : 190,
-        "Chicken shawarma" : 120,
-        "Spicy chicken" : 170,
+        "Tandoori Chicken": 500,
+        "Chicken BBQ": 280,
+        "Chicken Kebab": 190,
+        "Chicken Shawarma": 120,
         "Butter Chicken": 260,
         "Pepper Chicken": 240,
         "Mutton Curry": 280,
@@ -111,12 +96,9 @@ food_menu = {
         "Chocolate Shake": 140,
         "Strawberry Shake": 130,
         "Badam Milk": 90,
-        "Elaneer Payasam Cold" : 50,
-        "Grape Juice" : 70,
-        "Musk Melon Juice":70,
-        "ABC Juice" :120,
-        "Carrot juice" : 60,
-
+        "Grape Juice": 70,
+        "ABC Juice": 120,
+        "Carrot Juice": 60
     },
 
     "Desserts": {
@@ -128,36 +110,288 @@ food_menu = {
         "Brownie": 100,
         "Chocolate Cake": 120,
         "Black Forest Cake": 140,
-        "Red velvet cake" : 160,
-        "Honey cake" : 80,
-        "White forest cake" : 150
+        "Red Velvet Cake": 160,
+        "Honey Cake": 80,
+        "White Forest Cake": 150
     }
 }
 
+# KPI CARDS
 # -----------------------------
-# Sidebar Menu
-# -----------------------------
-with st.sidebar:
-    st.header("🍽 Menu")
+col1, col2, col3 = st.columns(3)
 
-    for category, items in food_menu.items():
-        with st.expander(category):
-            for item, price in items.items():
-                st.write(f"{item} - ₹{price}")
+with col1:
+    st.metric("🍽 Menu Categories", len(food_menu))
+
+with col2:
+    st.metric("⭐ Rating", "4.9")
+
+with col3:
+    st.metric("🚚 Delivery", "30 Min")
 
 # -----------------------------
-# Chat Memory
+# Page Config
 # -----------------------------
+st.set_page_config(
+    page_title="AI Food Ordering Assistant",
+    page_icon="🍔",
+    layout="wide"
+)
+
+st.markdown("""
+<style>
+
+/* ---------------- BACKGROUND ---------------- */
+
+.stApp{
+    background: linear-gradient(135deg,#1a0000,#3b0000,#660000,#8B0000);
+    color:white;
+}
+
+/* Hide Streamlit Header */
+header{
+    visibility:hidden;
+}
+
+/* ---------------- HERO ---------------- */
+
+.hero{
+    text-align:center;
+    padding:40px;
+}
+
+.hero h1{
+    font-size:58px;
+    font-weight:800;
+    color:white;
+}
+
+.hero p{
+    font-size:22px;
+    color:#FFE5E5;
+}
+
+/* ---------------- SIDEBAR ---------------- */
+
+[data-testid="stSidebar"]{
+    background:#1a0000;
+    border-right:2px solid #ff4d4d;
+}
+
+/* ---------------- METRIC CARDS ---------------- */
+
+[data-testid="metric-container"]{
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:18px;
+    padding:18px;
+    backdrop-filter:blur(12px);
+    box-shadow:0px 8px 20px rgba(0,0,0,.35);
+}
+
+/* ---------------- SELECT BOX ---------------- */
+
+.stSelectbox > div > div{
+    background:#2b0000;
+    color:white;
+    border-radius:12px;
+    border:1px solid #ff4d4d;
+}
+
+/* ---------------- FOOD CARDS ---------------- */
+
+.food-card{
+
+    background:rgba(255,255,255,0.08);
+
+    border-radius:18px;
+
+    padding:18px;
+
+    margin-bottom:18px;
+
+    border:1px solid rgba(255,255,255,.1);
+
+    box-shadow:0 8px 25px rgba(0,0,0,.35);
+
+    transition:0.3s;
+
+}
+
+.food-card:hover{
+
+    transform:translateY(-5px);
+
+    border:1px solid #ff4d4d;
+
+    box-shadow:0 0 20px rgba(255,77,77,.5);
+
+}
+
+/* ---------------- BUTTONS ---------------- */
+
+.stButton>button{
+
+    background:linear-gradient(90deg,#ff1a1a,#cc0000);
+
+    color:white;
+
+    border:none;
+
+    border-radius:12px;
+
+    font-weight:bold;
+
+    height:45px;
+
+    transition:0.3s;
+
+}
+
+.stButton>button:hover{
+
+    background:linear-gradient(90deg,#ff3333,#990000);
+
+    transform:scale(1.04);
+
+}
+
+/* ---------------- CHAT ---------------- */
+
+[data-testid="stChatMessage"]{
+
+    background:rgba(255,255,255,.08);
+
+    border-radius:16px;
+
+    border:1px solid rgba(255,255,255,.1);
+
+    padding:15px;
+
+}
+
+/* ---------------- CHAT INPUT ---------------- */
+
+[data-testid="stChatInput"]{
+
+    background:#2b0000;
+
+    border-radius:15px;
+
+}
+
+/* ---------------- TEXT ---------------- */
+
+h1,h2,h3,h4,h5,h6{
+    color:white;
+}
+
+p,label,span{
+    color:#FFE5E5;
+}
+
+/* ---------------- SUCCESS ---------------- */
+
+.stSuccess{
+    background:#14532d;
+    color:white;
+    border-radius:10px;
+}
+
+/* ---------------- INFO ---------------- */
+
+.stInfo{
+    background:#450a0a;
+    color:white;
+    border-radius:10px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# -----------------------------
+# HERO SECTION
+# -----------------------------
+st.markdown("""
+<div class="hero">
+<h1>🍔 AI Food Ordering Assistant</h1>
+<p>Order Food • Get Recommendations • Chat Naturally</p>
+</div>
+""", unsafe_allow_html=True)
+
+
+# -----------------------------
+# SESSION STATE
+# -----------------------------
+if "cart" not in st.session_state:
+    st.session_state.cart = []
+
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Display old messages
+# -----------------------------
+# SIDEBAR CART
+# -----------------------------
+with st.sidebar:
+
+    st.title("🛒 My Cart")
+
+    total = 0
+
+    if len(st.session_state.cart) == 0:
+        st.info("Cart Empty")
+
+    for item in st.session_state.cart:
+
+        st.write("✅", item)
+
+        for category in food_menu:
+            if item in food_menu[category]:
+                total += food_menu[category][item]
+
+    st.markdown("---")
+    st.subheader(f"💰 Total: ₹{total}")
+
+    if st.button("Place Order"):
+        st.success("🎉 Order Placed Successfully!")
+
+ # -----------------------------
+# MENU CATEGORIES
+# -----------------------------
+st.markdown("## 🍽 Browse Menu")
+
+selected_category = st.selectbox(
+    "Choose Food Category",
+    list(food_menu.keys())
+)       
+
+st.subheader(f"🍴 {selected_category}")
+
+for item, price in food_menu[selected_category].items():
+
+    col1, col2, col3 = st.columns([4,1,1])
+
+    with col1:
+        st.write(item)
+
+    with col2:
+        st.write(f"₹{price}")
+
+    with col3:
+        if st.button("➕", key=item):
+            st.session_state.cart.append(item)
+
+
+# -----------------------------
+# DISPLAY CHAT HISTORY
+# -----------------------------
 for message in st.session_state.messages:
+
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
 # -----------------------------
-# Chat Input
+# CHATBOT
 # -----------------------------
 user_prompt = st.chat_input(
     "Ask for food, prices, recommendations, or place an order..."
@@ -165,48 +399,44 @@ user_prompt = st.chat_input(
 
 if user_prompt:
 
-    # Show user message
     st.chat_message("user").markdown(user_prompt)
 
     st.session_state.messages.append(
         {
-            "role": "user",
-            "content": user_prompt
+            "role":"user",
+            "content":user_prompt
         }
     )
 
-    # System Prompt
     system_prompt = f"""
 You are an intelligent Food Ordering Assistant.
 
 Available Menu:
 {food_menu}
 
-Your responsibilities:
-- Help customers order food.
-- Recommend dishes.
-- Suggest combos.
-- Mention prices when asked.
-- Be friendly and professional.
-- Remember previous messages in the conversation.
-- Respond naturally like ChatGPT.
-- Use emojis occasionally.
-- If food is not available, politely say it is unavailable.
+Responsibilities:
+- Help customers order food
+- Recommend dishes
+- Suggest combos
+- Mention prices when asked
+- Be friendly
+- Respond naturally like ChatGPT
+- Use emojis occasionally
+- Remember previous messages
 """
 
-    # Prepare messages for Groq
     groq_messages = [
         {
-            "role": "system",
-            "content": system_prompt
+            "role":"system",
+            "content":system_prompt
         }
     ]
 
     for msg in st.session_state.messages:
         groq_messages.append(
             {
-                "role": msg["role"],
-                "content": msg["content"]
+                "role":msg["role"],
+                "content":msg["content"]
             }
         )
 
@@ -226,8 +456,8 @@ Your responsibilities:
 
         st.session_state.messages.append(
             {
-                "role": "assistant",
-                "content": answer
+                "role":"assistant",
+                "content":answer
             }
         )
 
